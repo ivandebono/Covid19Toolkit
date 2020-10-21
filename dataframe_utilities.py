@@ -16,3 +16,13 @@ def ECDC_week2day(df,weeklyname,dailyname):
 
 def insert_row(idx, df, df_insert):
     return df.iloc[:idx, ].append(df_insert).append(df.iloc[idx:, ]) #.reset_index(drop = True)
+
+
+def resample_weekly2daily(df,dates_to_resample,dailydatesname):
+    df2=df.copy()
+    df2=(1/7)*(df.set_index(dates_to_resample).resample('D').mean())
+    df2.interpolate(inplace=True)
+    df2[dailydatesname]=df2.index
+    df2.reset_index(drop=True,inplace=True)
+    
+    return df2

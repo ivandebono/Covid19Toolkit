@@ -3,15 +3,20 @@ import matplotlib.dates as mdates
 from matplotlib.dates import MonthLocator, WeekdayLocator, DateFormatter
 import seaborn as sns
 
-def mirrorplot(df,state=None,datasource=None,mirror=True):
+def mirrorplot(df,country=None,datasource=None,mirror=True,mynotes=True):
     
-    if state is not None:
-        try: country=df.state.unique()[0]
-        except: country=state
+    if mynotes:
+        country=country
+        datasource=datasource
+    else:
+        if country is not None:
+            try: country=df.state.unique()[0]
+            except: country=country
         
-    if datasource is not None:
-        try: datasource=df.datasource.unique()[0]
-        except: datasource=datasource
+        if datasource is not None:
+            try: datasource=df.datasource.unique()[0]
+            except: datasource=datasource
+
 
     years = mdates.YearLocator()   # every year
     months = mdates.MonthLocator()  # every month
@@ -94,7 +99,7 @@ def plot_fpr(df,df_fpr,country=None,datasource=None,mynotes=True):
 #plt.title(country+': Daily deaths \n Data: '+datasource)          
     
     ax.bar(df.date, df.positive,label='Reported positive tests',color='RoyalBlue',alpha=0.7)
-    ax.plot(df.date,df.positive_avg,label='Cases: rolling average',color='blue')
+    ax.plot(df.date,df.positive_avg,label='Reported positive tests: rolling average',color='blue')
     
     
     ax.bar(df.date, df.deaths,label='Reported deaths',color='crimson',alpha=1)
@@ -121,7 +126,11 @@ def plot_fpr(df,df_fpr,country=None,datasource=None,mynotes=True):
     ticks =  ax.get_yticks()
     ax.set_yticklabels([int(abs(tick)) for tick in ticks])
 
-    plt.legend(loc='upper left')
+    handles, labels = plt.gca().get_legend_handles_labels()
+    order = [2,3,0,1]
+    plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc='upper left')
+
+
     plt.grid(axis='y',alpha=0.4)
     #plt.grid(which='minor', axis='y',linestyle='--')
 
@@ -138,15 +147,19 @@ def plot_fpr(df,df_fpr,country=None,datasource=None,mynotes=True):
 
 
 
-def mirrorplot_withtest(df,testdf,state=None,datasource=None,mirror=True):
+def mirrorplot_withtest(df,testdf,country=None,datasource=None,mirror=True,mynotes=True):
     
-    if state is not None:
-        try: country=df.state.unique()[0]
-        except: country=state
+    if mynotes:
+        country=country
+        datasource=datasource
+    else:
+        if country is not None:
+            try: country=df.state.unique()[0]
+            except: country=country
         
-    if datasource is not None:
-        try: datasource=df.datasource.unique()[0]
-        except: datasource=datasource
+        if datasource is not None:
+            try: datasource=df.datasource.unique()[0]
+            except: datasource=datasource
 
     years = mdates.YearLocator()   # every year
     months = mdates.MonthLocator()  # every month
@@ -163,7 +176,7 @@ def mirrorplot_withtest(df,testdf,state=None,datasource=None,mirror=True):
     
 
     ax.plot(testdf.date,testdf.dailytestsavg,label='Tests: rolling average',color='green',alpha=1)
-    ax.bar(testdf.date,testdf.dailytests,label='Tests',color='green',alpha=0.8)
+    ax.bar(testdf.date,testdf.total,label='Tests',color='green',alpha=0.8)
 
     ax.bar(df.date, df.positive,label='Reported cases',color='RoyalBlue',alpha=1)
     
@@ -189,7 +202,11 @@ def mirrorplot_withtest(df,testdf,state=None,datasource=None,mirror=True):
 
     ticks =  ax.get_yticks()
     ax.set_yticklabels([int(abs(tick)) for tick in ticks])
-    plt.legend(loc='upper left')
+
+    handles, labels = plt.gca().get_legend_handles_labels()
+    order = [1,0,2,3]
+    plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc='upper left')
+
     plt.grid(axis='y',alpha=0.4)
     #plt.grid(which='minor', axis='y',linestyle='--')
 
@@ -198,7 +215,7 @@ def mirrorplot_withtest(df,testdf,state=None,datasource=None,mirror=True):
 
     fig.autofmt_xdate()
     sns.despine;
-    plt.tight_layout()
+
     plt.savefig('plots/'+country.replace(' ', '_').replace('/','_')+'MirrorPlot_withtests.png',dpi=250)
     
     return

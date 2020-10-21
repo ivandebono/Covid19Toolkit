@@ -394,9 +394,10 @@ def get_data_France():
     df=get_ecdc_data()
     FRdf=(df[df.state=='France']).reset_index(drop=True)
     FRdf['positive'].clip(lower=0,inplace=True)
-    FRdf=FRdf.sort_values(by='date').reset_index(drop=True)
+    
     
     fr=pd.merge(fr,FRdf,on='date',how='outer')
+    fr=fr.sort_values(by='date').reset_index(drop=True)
 
     #fr=pd.concat([frtests2,frtests])
     #fr=fr.groupby(by='date',as_index=False).sum()
