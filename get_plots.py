@@ -3,6 +3,8 @@ import matplotlib.dates as mdates
 from matplotlib.dates import MonthLocator, WeekdayLocator, DateFormatter
 import seaborn as sns
 
+import mpld3
+
 def mirrorplot(df,country=None,datasource=None,mirror=True,mynotes=True):
     
     if mynotes:
@@ -140,6 +142,11 @@ def plot_fpr(df,df_fpr,country=None,datasource=None,mynotes=True):
     sns.despine;
     plt.tight_layout()
     plt.savefig('plots/'+country.replace(' ', '_').replace('/','_')+'FPR_plot.png',dpi=250)
+
+    html_str = mpld3.fig_to_html(fig)
+    Html_file= open("index.html","w")
+    Html_file.write(html_str)
+    Html_file.close()
     
     return
 
